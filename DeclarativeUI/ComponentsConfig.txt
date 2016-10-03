@@ -1,0 +1,21 @@
+{
+    "title": "Charge",
+    "components": [
+        {
+            "type": "header",
+            "text": "CASH PAYMENT"
+        },
+        {
+            "type": "single-button",
+            "text": "Open Cash Register"
+        },
+        {
+            "type": "header",
+            "text": "CREDIT CARD PAYMENT"
+        },
+        {
+            "type": "single-label",
+            "text": "Waiting For Card Reader"
+        }
+    ]
+}

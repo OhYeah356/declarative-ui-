@@ -10,24 +10,22 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
-    let data = DataHandler()
-
 	let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    let sectionData = SectionData()
+    let cellCreator = CellCreator()
     
     // Layout for collectionView
 	let layout: UICollectionViewFlowLayout = {
 		let layout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsetsMake(20, 20, 200, 20)
 		layout.estimatedItemSize = CGSize(width: 280, height: 61)
-
 		return layout
 	}()
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
-        
 		setCollectionView()
-		data.getJSONData()
         setView()
 	}
    
@@ -45,57 +43,27 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		collectionView.backgroundColor = .lightGrayColor()
-		collectionView.registerClass(HeaderCell.self, forCellWithReuseIdentifier: "HeaderCell")
-		collectionView.registerClass(ButtonCell.self, forCellWithReuseIdentifier: "ButtonCell")
-		collectionView.registerClass(SingleLabelCell.self, forCellWithReuseIdentifier: "LabelCell")
 	}
     
     // Set View
     func setView(){
-        title = data.mainTitle
+        title = sectionData.getTitle()
     }
     
 	// MARK: - CollectionView Data Source
-
 	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return data.components.count
+		return sectionData.getComponents().count
 	}
 
 	func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let JSONdata = data.components
-		for i in JSONdata {
-			if i.indexPath == indexPath.row {
+        let data = sectionData.getComponents()
+		for (i,y) in data.enumerate() {
+			if i == indexPath.row {
                 // Return cell by type name
-                return getCell(i.type, indexPath: indexPath, text: i.text)
+                return cellCreator.createCell(y.type, indexPath: indexPath, text: y.text, collectionView: self.collectionView)
 			}
 		}
-        // Return Default cell
         return UICollectionViewCell()
-	}
-
-    
-    // Return cell by type
-    func getCell(cellName: String, indexPath: NSIndexPath, text: String) -> UICollectionViewCell {
-        
-        // Header Cell
-		if cellName == ComponentsType.Header.rawValue {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("HeaderCell", forIndexPath: indexPath) as! HeaderCell
-            cell.headerLabel.text = text
-            return cell
-        // Button Cell
-		} else if cellName == ComponentsType.SingleButton.rawValue {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ButtonCell", forIndexPath: indexPath) as! ButtonCell
-            cell.button.setTitle(text, forState: .Normal)
-			return cell
-        // Label Cell
-		} else if cellName == ComponentsType.SingleLabel.rawValue {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("LabelCell", forIndexPath: indexPath) as! SingleLabelCell
-            cell.label.text = text
-			return cell
-		} else {
-        // Default
-			return UICollectionViewCell()
-		}
 	}
 
 }
